@@ -6,32 +6,63 @@
         xmlns:local="clr-namespace:WpfApplab4"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <!-- Aquí estarán Fax y Botones -->
+            <RowDefinition Height="*"/>
+            <!-- DataGrid -->
+        </Grid.RowDefinitions>
 
-        <!-- Fila 1: Búsqueda por proveedor -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0">
-            <TextBox Name="txtBuscar" Width="250" Height="30" Margin="0,0,10,0" VerticalContentAlignment="Center"/>
-            <Button Content="Buscar" Width="75" Height="30" Click="Button_Buscar_proveedor"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Filas 0 a 4 = campos -->
+        <Label Grid.Row="0" Grid.Column="0" Content="ID Cliente:" Margin="5"/>
+        <TextBox x:Name="txtIdCliente" Grid.Row="0" Grid.Column="1" Margin="5"/>
+        <Label Grid.Row="0" Grid.Column="2" Content="Nombre Compañía:" Margin="5"/>
+        <TextBox x:Name="txtNombreCompañia" Grid.Row="0" Grid.Column="3" Margin="5"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="Nombre Contacto:" Margin="5"/>
+        <TextBox x:Name="txtNombreContacto" Grid.Row="1" Grid.Column="1" Margin="5"/>
+        <Label Grid.Row="1" Grid.Column="2" Content="Cargo Contacto:" Margin="5"/>
+        <TextBox x:Name="txtCargoContacto" Grid.Row="1" Grid.Column="3" Margin="5"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Dirección:" Margin="5"/>
+        <TextBox x:Name="txtDireccion" Grid.Row="2" Grid.Column="1" Margin="5"/>
+        <Label Grid.Row="2" Grid.Column="2" Content="Ciudad:" Margin="5"/>
+        <TextBox x:Name="txtCiudad" Grid.Row="2" Grid.Column="3" Margin="5"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Región:" Margin="5"/>
+        <TextBox x:Name="txtRegion" Grid.Row="3" Grid.Column="1" Margin="5"/>
+        <Label Grid.Row="3" Grid.Column="2" Content="Código Postal:" Margin="5"/>
+        <TextBox x:Name="txtCodPostal" Grid.Row="3" Grid.Column="3" Margin="5"/>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="País:" Margin="5"/>
+        <TextBox x:Name="txtPais" Grid.Row="4" Grid.Column="1" Margin="5"/>
+        <Label Grid.Row="4" Grid.Column="2" Content="Teléfono:" Margin="5"/>
+        <TextBox x:Name="txtTelefono" Grid.Row="4" Grid.Column="3" Margin="5"/>
+
+        <!-- Fila 5 = Fax + Botones -->
+        <Label Grid.Row="5" Grid.Column="0" Content="Fax:" Margin="5"/>
+        <TextBox x:Name="txtFax" Grid.Row="5" Grid.Column="1" Margin="5"/>
+
+        <StackPanel Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
+            <Button Content="Registrar Cliente" Width="150" Margin="5" Click="Button_RegistrarCliente"/>
+            <Button Content="Listar Clientes" Width="150" Margin="5" Click="Button_ListarClientes"/>
         </StackPanel>
 
-        <!-- Fila 2: Botones de listado -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50,0,0">
-            <Button Content="Listar Productos" Width="150" Height="30" Margin="0,0,10,0" Click="Button_Productos"/>
-            <Button Content="Listar Categorias" Width="150" Height="30" Margin="0,0,10,0" Click="Button_Pedidos"/>
-            <Button Content="Listar proveedor" Width="150" Height="30" Click="Button_Proveedor"/>
-        </StackPanel>
-
-        <!-- Fila 3: Filtro por fechas de pedidos -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,100,0,0">
-            <Label Content="Desde:" VerticalAlignment="Center"/>
-            <DatePicker Name="dpInicio" Width="120" Margin="5,0"/>
-            <Label Content="Hasta:" VerticalAlignment="Center"/>
-            <DatePicker Name="dpFin" Width="120" Margin="5,0"/>
-            <Button Content="Buscar Pedidos por Fecha" Width="180" Click="Button_BuscarPedidosPorFecha"/>
-        </StackPanel>
-
-        <!-- Fila 4: Resultados en DataGrid -->
-        <DataGrid Name="dgall" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,150,10,10"/>
-
+        <!-- Fila 6 = DataGrid -->
+        <DataGrid x:Name="dgall" Grid.Row="6" Grid.ColumnSpan="4" Margin="5" AutoGenerateColumns="True" Height="300"/>
     </Grid>
+
 </Window>

@@ -171,6 +171,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Cliente.cs" />
     <Compile Include="DetallePedido.cs" />
     <Compile Include="Pedido.cs" />
     <Compile Include="Producto.cs" />

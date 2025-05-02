@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
 using System.Data;
-using System.Collections.Generic;
 
 namespace WpfApplab4
 {
@@ -30,93 +29,13 @@ namespace WpfApplab4
             InitializeComponent();
         }
 
-        private void Button_BuscarPedidosPorFecha(object sender, RoutedEventArgs e)
+        public List<Cliente> ObtenerClientes()
         {
-            if (dpInicio.SelectedDate == null || dpFin.SelectedDate == null)
-            {
-                MessageBox.Show("Por favor selecciona ambas fechas.");
-                return;
-            }
-
-            try
-            {
-                DateTime fechaInicio = dpInicio.SelectedDate.Value;
-                DateTime fechaFin = dpFin.SelectedDate.Value;
-
-                var detalles = ObtenerDetallesPedidosPorFechas(fechaInicio, fechaFin);
-                dgall.ItemsSource = detalles;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al obtener detalles de pedidos: " + ex.Message);
-            }
-        }
-
-        private void Button_Buscar_proveedor(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                // Asume que buscarás por contacto y ciudad separados por coma
-                var valores = txtBuscar.Text.Split(',');
-
-                string nombreContacto = valores.Length > 0 ? valores[0].Trim() : "";
-                string ciudad = valores.Length > 1 ? valores[1].Trim() : "";
-
-                var resultado = BuscarProveedores(nombreContacto, ciudad);
-                dgall.ItemsSource = resultado;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error en la búsqueda: " + ex.Message);
-            }
-        }
-
-        private void Button_Productos(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var productos = ObtenerProductos();
-                dgall.ItemsSource = productos;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al obtener productos: " + ex.Message);
-            }
-        }
-
-
-        private void Button_Pedidos(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var pedidos = ObtenerPedidos();
-                dgall.ItemsSource = pedidos;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al obtener pedidos: " + ex.Message);
-            }
-        }
-
-        private void Button_Proveedor(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var proveedores = ObtenerProveedores();
-                dgall.ItemsSource = proveedores;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al obtener proveedores: " + ex.Message);
-            }
-        }
-        public List<Proveedor> ObtenerProveedores()
-        {
-            var lista = new List<Proveedor>();
+            var lista = new List<Cliente>();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                SqlCommand command = new SqlCommand("ListarProveedores", connection);
+                SqlCommand command = new SqlCommand("USP_ListarClientes", connection);
                 command.CommandType = CommandType.StoredProcedure;
 
                 connection.Open();
@@ -124,96 +43,20 @@ namespace WpfApplab4
 
                 while (reader.Read())
                 {
-                    lista.Add(new Proveedor
+                    lista.Add(new Cliente
                     {
-                        IdProveedor = Convert.ToInt32(reader["idProveedor"]),
-                        NombreCompañia = reader["nombreCompañia"].ToString(),
-                        NombreContacto = reader["nombrecontacto"].ToString(),
-                        CargoContacto = reader["cargocontacto"].ToString(),
-                        Direccion = reader["direccion"].ToString(),
-                        Ciudad = reader["ciudad"].ToString(),
-                        Region = reader["region"].ToString(),
-                        CodPostal = reader["codPostal"].ToString(),
-                        Pais = reader["pais"].ToString(),
-                        Telefono = reader["telefono"].ToString(),
-                        Fax = reader["fax"].ToString(),
-                        PaginaPrincipal = reader["paginaprincipal"].ToString()
-                    });
-                }
-
-                reader.Close();
-            }
-
-            return lista;
-        }
-
-        public List<Producto> ObtenerProductos()
-        {
-            var lista = new List<Producto>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand("ListarProductos", connection);
-                command.CommandType = CommandType.StoredProcedure;
-
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    lista.Add(new Producto
-                    {
-                        IdProducto = Convert.ToInt32(reader["idproducto"]),
-                        NombreProducto = reader["nombreProducto"].ToString(),
-                        IdProveedor = Convert.ToInt32(reader["idProveedor"]),
-                        IdCategoria = Convert.ToInt32(reader["idCategoria"]),
-                        CantidadPorUnidad = reader["cantidadPorUnidad"].ToString(),
-                        PrecioUnidad = Convert.ToDecimal(reader["precioUnidad"]),
-                        UnidadesEnExistencia = Convert.ToInt16(reader["unidadesEnExistencia"]),
-                        UnidadesEnPedido = Convert.ToInt16(reader["unidadesEnPedido"]),
-                        NivelNuevoPedido = Convert.ToInt16(reader["nivelNuevoPedido"]),
-                        Suspendido = Convert.ToBoolean(reader["suspendido"]),
-                        CategoriaProducto = reader["categoriaProducto"].ToString()
-                    });
-                }
-
-                reader.Close();
-            }
-
-            return lista;
-        }
-
-
-        public List<Pedido> ObtenerPedidos()
-        {
-            var lista = new List<Pedido>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand("ListarPedidos", connection);
-                command.CommandType = CommandType.StoredProcedure;
-
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    lista.Add(new Pedido
-                    {
-                        IdPedido = Convert.ToInt32(reader["IdPedido"]),
                         IdCliente = reader["IdCliente"].ToString(),
-                        IdEmpleado = Convert.ToInt32(reader["IdEmpleado"]),
-                        FechaPedido = Convert.ToDateTime(reader["FechaPedido"]),
-                        FechaEntrega = reader["FechaEntrega"] == DBNull.Value ? null : (DateTime?)reader["FechaEntrega"],
-                        FechaEnvio = reader["FechaEnvio"] == DBNull.Value ? null : (DateTime?)reader["FechaEnvio"],
-                        FormaEnvio = reader["FormaEnvio"].ToString(),
-                        Cargo = Convert.ToDecimal(reader["Cargo"]),
-                        Destinatario = reader["Destinatario"].ToString(),
-                        DireccionDestinatario = reader["DireccionDestinatario"].ToString(),
-                        CiudadDestinatario = reader["CiudadDestinatario"].ToString(),
-                        RegionDestinatario = reader["RegionDestinatario"].ToString(),
-                        CodPostalDestinatario = reader["CodPostalDestinatario"].ToString(),
-                        PaisDestinatario = reader["PaisDestinatario"].ToString()
+                        NombreCompañia = reader["NombreCompañia"].ToString(),
+                        NombreContacto = reader["NombreContacto"].ToString(),
+                        CargoContacto = reader["CargoContacto"].ToString(),
+                        Direccion = reader["Direccion"].ToString(),
+                        Ciudad = reader["Ciudad"].ToString(),
+                        Region = reader["Region"].ToString(),
+                        CodPostal = reader["CodPostal"].ToString(),
+                        Pais = reader["Pais"].ToString(),
+                        Telefono = reader["Telefono"].ToString(),
+                        Fax = reader["Fax"].ToString(),
+                        Activo = Convert.ToBoolean(reader["Activo"])
                     });
                 }
 
@@ -222,79 +65,89 @@ namespace WpfApplab4
 
             return lista;
         }
-        public List<Proveedor> BuscarProveedores(string nombreContacto, string ciudad)
-        {
-            var lista = new List<Proveedor>();
 
+        public void RegistrarCliente(Cliente cliente)
+        {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                SqlCommand command = new SqlCommand("BuscarProveedores", connection);
+                SqlCommand command = new SqlCommand("USP_InsertarClientes", connection);
                 command.CommandType = CommandType.StoredProcedure;
 
-                command.Parameters.AddWithValue("@NombreContacto", nombreContacto);
-                command.Parameters.AddWithValue("@Ciudad", ciudad);
+                command.Parameters.AddWithValue("@IdCliente", cliente.IdCliente);
+                command.Parameters.AddWithValue("@NombreCompañia", cliente.NombreCompañia);
+                command.Parameters.AddWithValue("@NombreContacto", cliente.NombreContacto);
+                command.Parameters.AddWithValue("@CargoContacto", cliente.CargoContacto);
+                command.Parameters.AddWithValue("@Direccion", cliente.Direccion);
+                command.Parameters.AddWithValue("@Ciudad", cliente.Ciudad);
+                command.Parameters.AddWithValue("@Region", cliente.Region);
+                command.Parameters.AddWithValue("@CodPostal", cliente.CodPostal);
+                command.Parameters.AddWithValue("@Pais", cliente.Pais);
+                command.Parameters.AddWithValue("@Telefono", cliente.Telefono);
+                command.Parameters.AddWithValue("@Fax", cliente.Fax);
 
                 connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    lista.Add(new Proveedor
-                    {
-                        IdProveedor = Convert.ToInt32(reader["idProveedor"]),
-                        NombreCompañia = reader["nombreCompañia"].ToString(),
-                        NombreContacto = reader["nombrecontacto"].ToString(),
-                        CargoContacto = reader["cargocontacto"].ToString(),
-                        Direccion = reader["direccion"].ToString(),
-                        Ciudad = reader["ciudad"].ToString(),
-                        Region = reader["region"].ToString(),
-                        CodPostal = reader["codPostal"].ToString(),
-                        Pais = reader["pais"].ToString(),
-                        Telefono = reader["telefono"].ToString(),
-                        Fax = reader["fax"].ToString(),
-                        PaginaPrincipal = reader["paginaprincipal"].ToString()
-                    });
-                }
-
-                reader.Close();
+                command.ExecuteNonQuery();
             }
-
-            return lista;
         }
-        public List<DetallePedido> ObtenerDetallesPedidosPorFechas(DateTime fechaInicio, DateTime fechaFin)
+
+        private void Button_RegistrarCliente(object sender, RoutedEventArgs e)
         {
-            var lista = new List<DetallePedido>();
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                SqlCommand command = new SqlCommand("ListarDetallesPedidosPorFechas", connection);
-                command.CommandType = CommandType.StoredProcedure;
-
-                command.Parameters.AddWithValue("@FechaInicio", fechaInicio);
-                command.Parameters.AddWithValue("@FechaFin", fechaFin);
-
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
+                var cliente = new Cliente
                 {
-                    lista.Add(new DetallePedido
-                    {
-                        IdPedido = Convert.ToInt32(reader["IdPedido"]),
-                        FechaPedido = Convert.ToDateTime(reader["FechaPedido"]),
-                        IdProducto = Convert.ToInt32(reader["IdProducto"]),
-                        PrecioUnidad = Convert.ToDecimal(reader["PrecioUnidad"]),
-                        Cantidad = Convert.ToInt32(reader["Cantidad"]),
-                        Descuento = float.Parse(reader["Descuento"].ToString())
-                    });
-                }
+                    IdCliente = txtIdCliente.Text,
+                    NombreCompañia = txtNombreCompañia.Text,
+                    NombreContacto = txtNombreContacto.Text,
+                    CargoContacto = txtCargoContacto.Text,
+                    Direccion = txtDireccion.Text,
+                    Ciudad = txtCiudad.Text,
+                    Region = txtRegion.Text,
+                    CodPostal = txtCodPostal.Text,
+                    Pais = txtPais.Text,
+                    Telefono = txtTelefono.Text,
+                    Fax = txtFax.Text
+                };
 
-                reader.Close();
+                RegistrarCliente(cliente);
+                MessageBox.Show("✅ Cliente registrado correctamente", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                
+                LimpiarCampos();
+                dgall.ItemsSource = ObtenerClientes();
+
             }
-
-            return lista;
+            catch (Exception ex)
+            {
+                MessageBox.Show("❌ Error al registrar cliente: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
+        private void Button_ListarClientes(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var clientes = ObtenerClientes();
+                dgall.ItemsSource = clientes;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("❌ Error al listar clientes: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void LimpiarCampos()
+        {
+            txtIdCliente.Clear();
+            txtNombreCompañia.Clear();
+            txtNombreContacto.Clear();
+            txtCargoContacto.Clear();
+            txtDireccion.Clear();
+            txtCiudad.Clear();
+            txtRegion.Clear();
+            txtCodPostal.Clear();
+            txtPais.Clear();
+            txtTelefono.Clear();
+            txtFax.Clear();
+        }
     }
 }
-
